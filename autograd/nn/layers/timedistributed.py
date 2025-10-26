@@ -20,29 +20,21 @@ class TimeDistributed(Module):
 
     def forward(self: TimeDistributed,
                 X: np.ndarray) -> np.ndarray:
-        # X shape: (batch_size, sequence size, input_dim)
-        batch_size, sequence_size = X.shape[0], X.shape[1]
-
-        # Initialize output array
-        Y_hat: np.ndarray = np.zeros((batch_size, sequence_size,
-                                     self.module.forward(X[0, 0:1, :]).shape[-1]))
-
-        # Apply the module to each sequence
+        # X shape: (batch_size, sequence_size, ...)
+        sequence_size = X.shape[1]
+        outputs: List[np.ndarray] = []
         for t in range(sequence_size):
-            Y_hat[:, t, :] = self.module.forward(X[:, t, :])
-        return Y_hat
+            outputs.append(self.module.forward(X[:, t, ...]))
+        return np.stack(outputs, axis=1)
     
     def backward(self: TimeDistributed,
                  X: np.ndarray,
                  dLoss_dModule: np.ndarray) -> np.ndarray:
-
-        batch_size, sequence_size = X.shape[0], X.shape[1]
-        dLoss_dX: np.ndarray = np.zeros_like(X)
-
+        sequence_size = X.shape[1]
+        grads_x: List[np.ndarray] = []
         for t in range(sequence_size):
-            dLoss_dX[:, t, :] = self.module.backward(X[:, t, :], dLoss_dModule[:, t, :])
-
-        return dLoss_dX
+            grads_x.append(self.module.backward(X[:, t, ...], dLoss_dModule[:, t, ...]))
+        return np.stack(grads_x, axis=1)
     
     def parameters(self: TimeDistributed) -> List[Parameter]:
         return self.module.parameters()

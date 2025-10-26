@@ -4,10 +4,10 @@ from abc import abstractmethod, ABC
 from typing import List, Optional, Tuple
 import numpy as np
 
-from nn.layers.cells.rnn_cell import RNNCell
-from nn.layers.dense import Dense
-from nn.layers.tanh import Tanh
-from nn.layers.sigmoid import Sigmoid
+from .rnn_cell import RNNCell
+from ...layers.dense import Dense
+from ...layers.tanh import Tanh
+from ...layers.sigmoid import Sigmoid
 
 
 # PYTHON PROJECT IMPORTS
