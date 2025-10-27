@@ -25,7 +25,7 @@ class Sequential(Module):
         return self
 
     def parameters(self: Sequential) -> List[Parameter]:
-        params: List[Parameters] = list()
+        params: List[Parameter] = list()
         for m in self.layers:
             params.extend(m.parameters())
         return params
@@ -47,4 +47,3 @@ class Sequential(Module):
         for i,m in enumerate(self.layers[::-1]):
             dLoss_dModule = m.backward(Xs[-i-2], dLoss_dModule)
         return dLoss_dModule
-
